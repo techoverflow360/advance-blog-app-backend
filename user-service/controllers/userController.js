@@ -1,17 +1,24 @@
-const { generateToken } = require('../utils/jwtUtil');
+const { generateToken } = require('../utils/utils');
 const bcrypt = require('bcrypt');
 const User  = require('../model/User');
+require('dotenv').config();
 
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         if(!email) return res.status(400).json({ message : "email is empty !"});
         if(!password) return res.status(400).json({ message : "password is empty !"});
+        if(email===process.env.ADMIN_EMAIL && password===process.env.ADMIN_PASSWORD){
+            const payload={ email:process.env.ADMIN_EMAIL, isAdmin:true }
+            const token = generateToken(payload);
+            return res.status(200).json({ message : "logged in as Admin!", token : token });   
+        }
         const user = await User.findByPk(email);
         if(!user) return res.status(400).json({ message : "User doesnot found with this email !"});
         const isValidPassword = await bcrypt.compare(password, user.password);
         if(!isValidPassword) return res.status(400).json({ message : "Password is incorrect !"});
-        const payload = { email : user.email };
+
+        const payload = { email : user.email ,isAdmin:false };
         const token = generateToken(payload);
         res.status(200).json({ message : "User found and logged in !", token : token });   
     } catch (error) {
@@ -40,8 +47,8 @@ const register = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const id = req.params.id;
-        const user = await User.findByPk(id);
+        const userName = req.params.username;
+        const user = await User.findOne({where:{username:userName}});
         if(!user) return res.status(400).json({ message : "User not found !" });
         return res.status(200).json({ message : "User found !", user : user });
     } catch (error) {
@@ -53,9 +60,9 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         // to update, pass data in body and id in params
-        const id = req.params.id;
+        const userName= req.params.username;
         const { username, firstName, lastName, age } = req.body;
-        const user = await User.findByPk(id);
+        const user = await User.findOne({where:{username:userName}});
         if(!user) return res.status(400).json({ message: "User not found !" });
         let checkUsername;
         if(username) checkUsername = await User.findOne({ where: { username : username }});
@@ -75,8 +82,8 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const id = req.params.id;
-        const user = await User.findByPk(id);
+        const userName= req.params.username;
+        const user = await User.findOne({where:{username:userName}});
         if(!user) return res.status(400).json({ message : "User not found !" });
         await user.destroy();
         return res.status(200).json({ message : "User deleted successfully !"});    
@@ -102,7 +109,34 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const toggleEnableDisable=async(req,res)=>{
+    try{
+        const username=req.params.username;
+        const user=await User.findOne({where:{username:username}})
+        if(!user){
+            return res.status(400).json({message:"user not found" })
+        }
+        user.isDisabled=!user.isDisabled
+        const updatedUser=await user.save();
+        return res.status(200).json({message:`currently user status : ${ updateUser.isDisabled? "Disabled":"Enabled"}`})
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message : "Internal Server error !"});
+    }
+}
+
+const getIsDisabledById=async(req,res)=>{
+    try{
+        const userid=req.params.id
+        const user=await User.findByPk(userid);
+        return res.status(200).json({isDisabled:user.isDisabled});
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message : "Internal Server error !"});
+    }
+}
+
 module.exports = {
-    login , register, getUser, updateUser, deleteUser, resetPassword
+    login , register, getUser, updateUser, deleteUser, resetPassword,toggleEnableDisable
 }
 

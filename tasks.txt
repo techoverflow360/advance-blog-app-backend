@@ -8,8 +8,8 @@ To complete:
 6. implement service discovery to find the service instance
 7. implement circuit breaker to handle service instance failure
 8. implement load balancing to distribute traffic across service instances
-9. implement google and any other login system 
-10. implement admin role and its actions
+9. implement google, Facebook login 
+10. implement admin role and its actions amd it can disable and enable user account
 11. use docker to containerize the application
 12. implement image saving for post
 13. implement cashing for frequently used data
@@ -19,7 +19,6 @@ To complete:
 17. add filtering by category, and other features  
 18. implement pagination
 20. implement user follow and unfollow and showing number of followers
-21. user account disable and enable, user cannot delete his own account
 22. allow them to save post as draft and publish later
 23. Add tags to posts for better categorization and searchability.
 24. implement likes, dislikes on comments

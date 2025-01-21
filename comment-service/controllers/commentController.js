@@ -31,6 +31,22 @@ const getCommentsByPostId = async (req, res) => {
     }
 };
 
+const deleteCommentByCommentId=async(req,res)=>{
+    try{
+        const id=req.params.commentId;
+        const comment=await Comment.findByPk(id) //where:{ id:id}
+        if(!comment){
+            return res.status(400).json({message:'comment id not exist'})
+        }
+        await comment.destroy();
+        return res.status(200).json({message:'comment deleted of specific id'})
+
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error !" });
+   
+    }
+};
 module.exports = {
-    createComment, getCommentsByPostId
+    createComment, getCommentsByPostId,deleteCommentByCommentId
 }

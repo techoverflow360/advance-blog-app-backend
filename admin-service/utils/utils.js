@@ -1,13 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-
-const generateToken = (payload) => {
-    if(!payload) return false;
-    const token = jwt.sign(payload, process.env.SECRET);
-    return token;
-}
-
 const verifyToken = (token) => {
     try {
         const decodedPayload = jwt.verify(token, process.env.SECRET);
@@ -36,7 +29,10 @@ const authenticateUser = (req, res, next) => {
         if (!payload) {
             return res.status(402).json({ error: 'Invalid token' });
         }
-        req.user = payload;
+        req.user ={
+          payload:payload,
+          token:token
+        }
         next();
     } catch (error) {
         console.error('Token verification error:', error);
@@ -44,6 +40,14 @@ const authenticateUser = (req, res, next) => {
     }
 }
 
+const adminAuthenticate=async(req,res,next)=>{
+    const isAdmin=req.user.payload.isAdmin;
+    if(isAdmin==true){
+        next();
+    }
+    return res.status(401).json({message:'You are not an admin'});
+}
+
 module.exports = {
-    generateToken, verifyToken, authenticateUser
+  verifyToken, authenticateUser,adminAuthenticate
 }

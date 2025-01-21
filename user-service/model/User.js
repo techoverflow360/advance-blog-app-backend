@@ -33,6 +33,16 @@ const User = sequelize.define('Blogger', {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
+    isAdmin:{
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue:false,
+    },
+    isDisabled:{
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue:false,
+    }
 });
 
 User.beforeCreate(async (user) => {

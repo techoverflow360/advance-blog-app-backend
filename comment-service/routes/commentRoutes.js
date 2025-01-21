@@ -5,5 +5,5 @@ const router = express.Router();
 
 router.post('/', controller.createComment);
 router.get('/:postId', controller.getCommentsByPostId);
-
+router.delete('/:commentId',controller.deleteCommentByCommentId)
 module.exports = router;

@@ -30,7 +30,7 @@ const getPostById = async (req, res) => {
     }
 }
 
-const   createPost = async (req, res) => {
+const createPost = async (req, res) => {
     try {
         const authorId = req.user.payload.email;
         // since post should show username of author, so we request user-service to give user info from email
