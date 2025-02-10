@@ -1,12 +1,16 @@
 const express = require('express');
 const controllers = require('../controllers/postController');
-const {authenticateIsDisabled}=require('../utils/utils')
+const {authenticateIsDisabled, authenticateUser}=require('../utils/utils')
 const router = express.Router();
 
+// for post service 
 router.get('/', controllers.getAllPost);
 router.get('/:id', controllers.getPostById);
-router.post('/', authenticateIsDisabled, controllers.createPost);
-router.put('/:id', authenticateIsDisabled,controllers.updatePost);
-router.delete('/:id',authenticateIsDisabled, controllers.deletePost);
+router.post('/', authenticateUser, authenticateIsDisabled, controllers.createPost);
+router.put('/:id', authenticateUser, authenticateIsDisabled,controllers.updatePost);
+router.delete('/:id',authenticateUser, authenticateIsDisabled, controllers.deletePost);
+
+// for likes and dislikes of posts : called by user service 
+router.post('/like/:postId', authenticateUser, )
 
 module.exports = router;

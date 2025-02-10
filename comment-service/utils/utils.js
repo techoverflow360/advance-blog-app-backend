@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { StatusCodes } = require('http-status-codes');
 require('dotenv').config();
 
 const verifyToken = (token) => {
@@ -21,13 +22,13 @@ const verifyToken = (token) => {
 
 const authenticateUser = (req, res, next) => {
     const authenticationHeader = req.headers['authorization'];
-    if(!authenticationHeader) return res.status(401).json({ message : "Authorization header is missing !"});
-    if (!authenticationHeader.startsWith('Bearer')) return res.status(401).json({ error: 'Invalid Authorization header format' });
+    if(!authenticationHeader) return res.status(StatusCodes.UNAUTHORIZED).json({ message : "Authorization header is missing !"});
+    if (!authenticationHeader.startsWith('Bearer')) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Invalid Authorization header format' });
     const token = authenticationHeader.split(' ')[1];
     try {
         const payload = verifyToken(token);
         if (!payload) {
-            return res.status(402).json({ error: 'Invalid token' });
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Invalid token' });
         }
         req.user = {
             payload: payload,
@@ -36,11 +37,24 @@ const authenticateUser = (req, res, next) => {
         next();
     } catch (error) {
         console.error('Token verification error:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
     }
+}
+
+const authenticateIsDisabled=async(req,res,next)=>{
+    const id=req.user.payload.email;
+    const response=await axios.get(`http://localhost:8080/users/isDisabled/${id}`)
+    if(!response){
+        return res.status(StatusCodes.NOT_FOUND).json({message:"response is empty while contacting with user service "})
+    }
+    const isDisabled=response.data.isDisabled;
+    if(isDisabled){
+        return res.status(StatusCodes.UNAUTHORIZED).json({message:"currently u are disabled"})
+    }
+    next();
 }
 
 
 module.exports = {
-    authenticateUser, verifyToken
+    authenticateUser, verifyToken, authenticateIsDisabled
 }

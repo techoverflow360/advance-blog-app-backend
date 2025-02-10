@@ -19,8 +19,17 @@ const Comment = sequelize.define('Comment', {
     comment : {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    likes: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
+    },
+    dislikes: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
     }
 }, { timestamps : true });
+
 
 Comment.sync({ force : false });
 

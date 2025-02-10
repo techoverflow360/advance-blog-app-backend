@@ -1,35 +1,40 @@
-1. make microservices for user, post, comment
-2. use seperate database for each service to store individual data
-3. use postgreSQL 
-4. provide authentication for each service using JWT
+-- make microservices for user, post, comment
+-- use seperate database for each service to store individual data
+-- use postgreSQL 
+-- provide authentication for each service using JWT
+-- implement likes, dislikes on comments
+-- implement likes, dislikes replies
+-- add nested comments, after clicking on total replies button, it shows all replies
+
+
+half complete: 
+-- implement admin role and its actions amd it can disable and enable user account
+
 
 To complete: 
-5. implement API Gateway to route requests to individual services
-6. implement service discovery to find the service instance
-7. implement circuit breaker to handle service instance failure
-8. implement load balancing to distribute traffic across service instances
-9. implement google, Facebook login 
-10. implement admin role and its actions amd it can disable and enable user account
-11. use docker to containerize the application
-12. implement image saving for post
-13. implement cashing for frequently used data
-14. add nested comments, with button showing total replies comment and clicking it gives all comments like on utube
-15. implement search functionality 
-16. implement likes, dislikes, and rating system for post 
-17. add filtering by category, and other features  
-18. implement pagination
-20. implement user follow and unfollow and showing number of followers
-22. allow them to save post as draft and publish later
-23. Add tags to posts for better categorization and searchability.
-24. implement likes, dislikes on comments
-25. Integrate sharing functionality for social media platforms (e.g., Twitter, Facebook).
-26. implement analytics for user engagement
-27. deploy the project
-28. payment system for taking subscription
-29. subscription model of different types 
-30. implement stream and buffer for large data reading 
-31. top trending blogs based on amounts of clicks and likes
-32. recommendation system 
-33. notify via email about trending post related to your favourite category
+-- implement likes, dislikes on posts
+-- implement API Gateway to route requests to individual services
+-- implement service discovery to find the service instance
+-- implement circuit breaker to handle service instance failure
+-- implement load balancing to distribute traffic across service instances
+-- implement google, Facebook login 
+-- use docker to containerize the application
+-- implement image saving for post
+-- implement cashing for frequently used data
+-- implement search functionality 
+-- add filtering by category, and other features  
+-- implement pagination
+-- implement user follow and unfollow and showing number of followers
+-- allow them to save post as draft and publish later
+-- Add tags to posts for better categorization and searchability.
+-- Integrate sharing functionality for social media platforms (e.g., Twitter, Facebook).
+-- implement analytics for user engagement
+-- deploy the project
+-- payment system for taking subscription
+-- subscription model of different types 
+-- implement stream and buffer for large data reading 
+-- top trending blogs based on amounts of clicks and likes
+-- recommendation system 
+-- notify via email about trending post related to your favourite category
 
 

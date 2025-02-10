@@ -1,7 +1,7 @@
 const express = require('express');
-const routes = require("./routes/commentRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+const replyRoutes = require("./routes/replyRoutes");
 require('dotenv').config();   // for .env variables 
-const { authenticateUser } = require('./utils/utils');
 
 const bodyParser = require('body-parser');   // bodyParser in Node.js is a middleware that parses incoming request bodies and 
                                             //  makes them available under the req.body property in your application.
@@ -13,7 +13,8 @@ app.use(bodyParser.json());   // to parse json data
 app.use(bodyParser.urlencoded({ extended: true }))  // to parse url encoded data
 app.use(cors({origin: 'http://localhost:3000'}));  // to allow cross
 
-app.use('/comments', authenticateUser, routes);  
+app.use('/comments', commentRoutes);  
+app.use('/replies', replyRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log("Comment - Server started at Port : " + process.env.PORT);

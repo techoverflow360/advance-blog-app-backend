@@ -42,6 +42,36 @@ const User = sequelize.define('Blogger', {
         type: DataTypes.BOOLEAN,
         allowNull: true,
         defaultValue:false,
+    },
+    likedComment : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    },
+    dislikedComment : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    },
+    likedReply : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    },
+    dislikedReply : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    },
+    likedPost : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    },
+    dislikedPost : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
     }
 });
 

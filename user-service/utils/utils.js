@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const { StatusCodes } = require('http-status-codes');
+const User = require('../model/User');
 require('dotenv').config();
 
 
@@ -28,19 +30,22 @@ const verifyToken = (token) => {
 
 const authenticateUser = (req, res, next) => {
     const authenticationHeader = req.headers['authorization'];
-    if(!authenticationHeader) return res.status(401).json({ message : "Authorization header is missing !"});
-    if (!authenticationHeader.startsWith('Bearer')) return res.status(401).json({ error: 'Invalid Authorization header format' });
+    if(!authenticationHeader) return res.status(StatusCodes.UNAUTHORIZED).json({ message : "Authorization header is missing !"});
+    if (!authenticationHeader.startsWith('Bearer')) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Invalid Authorization header format' });
     const token = authenticationHeader.split(' ')[1];
     try {
         const payload = verifyToken(token);
         if (!payload) {
-            return res.status(402).json({ error: 'Invalid token' });
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Invalid token' });
         }
-        req.user = payload;
+        req.user = {
+            payload: payload,
+            token: token
+        }
         next();
     } catch (error) {
         console.error('Token verification error:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
     }
 }
 
@@ -49,8 +54,24 @@ const adminAuthenticate=async(req,res,next)=>{
     if(isAdmin==true){
         next();
     }
-    return res.status(401).json({message:'You are not an admin'});
+    return res.status(StatusCodes.UNAUTHORIZED).json({message:'You are not an admin'});
 }
+
+const authenticateIsDisabled = async (req, res, next) => {
+    try {
+        const userName = req.user.payload.username;
+        const user = await User.findOne({where:{username:userName}});
+        if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "User not found !" });
+        if(user.isDisabled) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ message: "User is currently disabled !" });
+        } 
+        next();
+    } catch (error) {
+        console.error('Token verification error:', error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+    }
+}
+
 module.exports = {
-    generateToken, verifyToken, authenticateUser,adminAuthenticate
+    generateToken, verifyToken, authenticateUser,adminAuthenticate, authenticateIsDisabled
 }

@@ -24,6 +24,24 @@ const Post = sequelize.define('Post', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    likes: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
+    },
+    dislikes: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
+    },
+    likedUser : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    },
+    dislikedUser : {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+        defaultValue: []
+    }
 }, { timestamps: true });
 
 sequelize.sync({ force: false });
