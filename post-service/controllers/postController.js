@@ -76,6 +76,58 @@ const deletePost = async (req, res) => {
     }
 }
 
+const likePost = async (req, res) => {
+    // update likes variable and other cases -> then add user into likedUser array  
+    try {
+        const postId = req.params.postId;
+        const username = req.user.payload.username;
+        const { check, checkDisliked } = req.body;
+        const post = await Post.findByPk(postId);
+        if(check){
+            post.likes--;
+            post.likedUser = post.likedUser.filter(user => user !== username);
+        } else {
+            post.likes++;
+            post.likedUser = [...post.likedUser, username];
+        }
+        if(checkDisliked){
+            post.dislikes--;
+            post.dislikedUser = post.dislikedUser.filter(user => user !== username);
+        }
+        post.save();
+        return res.status(StatusCodes.OK).json({ message: "Liked on post !" });
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
+    }
+}
+
+const dislikePost = async (req, res) => {
+    // update dislikes variable and other cases -> then add user into dislikedUser array  
+    try {
+        const postId = req.params.postId;
+        const username = req.user.payload.username;
+        const { check, checkLiked } = req.body;
+        const post = await Post.findByPk(postId);
+        if(check){
+            post.dislikes--;
+            post.dislikedUser = post.dislikedUser.filter(user => user !== username);
+        } else {
+            post.dislikes++;
+            post.dislikedUser = [...post.dislikedUser, username];
+        }
+        if(checkLiked){
+            post.likes--;
+            post.likedUser = post.likedUser.filter(user => user !== username);
+        }
+        post.save();
+        return res.status(StatusCodes.OK).json({ message: "Liked on post !" });
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
+    }
+}
+
 module.exports = {
-    getAllPost, getPostById, createPost, updatePost, deletePost
+    getAllPost, getPostById, createPost, updatePost, deletePost, likePost, dislikePost
 }

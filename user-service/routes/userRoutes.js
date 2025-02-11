@@ -14,11 +14,12 @@ router.get('/isDisabled/:id', authenticateUser, controller.getIsDisabledById);
 
 // for below : check authenticate + isDisabled  
 router.put('/:username', authenticateUser, authenticateIsDisabled, controller.updateUser);
-router.post('/like/commentId', authenticateUser, authenticateIsDisabled, controller.likeComment);
-router.post('/dislike/commentId', authenticateUser, authenticateIsDisabled, controller.dislikeComment);
-router.post('/like/replyId', authenticateUser, authenticateIsDisabled, controller.likeReply);
-router.post('/dislike/replyId', authenticateUser, authenticateIsDisabled, controller.dislikeReply);
-
+router.post('/like/:commentId', authenticateUser, authenticateIsDisabled, controller.likeComment);
+router.post('/dislike/:commentId', authenticateUser, authenticateIsDisabled, controller.dislikeComment);
+router.post('/like/:replyId', authenticateUser, authenticateIsDisabled, controller.likeReply);
+router.post('/dislike/:replyId', authenticateUser, authenticateIsDisabled, controller.dislikeReply);
+router.post('/like/:postId', authenticateUser, authenticateIsDisabled, controller.likePost);
+router.post('/dislike/:postId', authenticateUser, authenticateIsDisabled, controller.dislikePost);
 
 
 

@@ -33,12 +33,12 @@ const Post = sequelize.define('Post', {
         allowNull: true,
     },
     likedUser : {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: true,
         defaultValue: []
     },
     dislikedUser : {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: true,
         defaultValue: []
     }

@@ -11,6 +11,7 @@ router.put('/:id', authenticateUser, authenticateIsDisabled,controllers.updatePo
 router.delete('/:id',authenticateUser, authenticateIsDisabled, controllers.deletePost);
 
 // for likes and dislikes of posts : called by user service 
-router.post('/like/:postId', authenticateUser, )
+router.post('/like/:postId', authenticateUser, authenticateIsDisabled, controllers.likePost);
+router.post('/dislike/:postId', authenticateUser, authenticateIsDisabled, controllers.dislikePost);
 
 module.exports = router;

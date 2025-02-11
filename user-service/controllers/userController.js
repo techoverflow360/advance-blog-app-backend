@@ -308,9 +308,93 @@ const dislikeReply = async (req, res) => {
     }
 }
 
+const likePost = async (req, res) => {
+    // get postId -> check already liked then unlike -> check dislike then undislike -> call post service -> update user schema by title
+    try {
+        const postId = req.params.postId;
+
+        const username = req.user.payload.username;
+        const user = await User.findOne({where:{username:username}});
+        if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "User not found !" });
+        const checkAlreadyLiked = user.likedPost.includes(postId); 
+        const checkDisliked = user.dislikedPost.includes(postId);
+
+        const response=await axios.get(`http://localhost:8081/posts/like/${postId}`,
+            {
+                check : checkAlreadyLiked,
+                checkDisliked: checkDisliked
+            }, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${req.user.token}`
+                }
+            }
+        );
+        if(!response){
+            return res.status(StatusCodes.NOT_FOUND).json({message:"empty response while cross service request !"})
+        }
+
+        const newlikedPost = [];
+        if(checkAlreadyLiked) newlikedPost = user.likedPost.filter(id => id !== postId);
+        else newlikedPost = [...user.likedPost, postId];
+        if(checkDisliked) {
+            user.dislikedPost = user.dislikedPost.filter(id => id !== postId);
+        }
+        user.likedPost = newlikedPost;
+        user.save();
+
+        return res.status(StatusCodes.OK).json({ message: "User liked the post !" })
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
+    }
+}
+
+const dislikePost = async (req, res) => {
+    // get postId -> check already disliked then undislike -> check like then unlike -> call post service -> update user schema by title
+    try {
+        const postId = req.params.postId;
+
+        const username = req.user.payload.username;
+        const user = await User.findOne({where:{username:username}});
+        if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "User not found !" });
+        const checkAlreadyDisliked = user.dislikedPost.includes(postId); 
+        const checkLiked = user.likedPost.includes(postId);
+
+        const response=await axios.get(`http://localhost:8081/posts/dislike/${postId}`,
+            {
+                check : checkAlreadyDisliked,
+                checkLiked: checkLiked
+            }, 
+            {
+                headers: {
+                    'Authorization': `Bearer ${req.user.token}`
+                }
+            }
+        );
+        if(!response){
+            return res.status(StatusCodes.NOT_FOUND).json({message:"empty response while cross service request !"})
+        }
+
+        const newDislikedPost = [];
+        if(checkAlreadyDisliked) newDislikedPost = user.dislikedPost.filter(id => id !== postId);
+        else newDislikedPost = [...user.dislikedPost, postId];
+        if(checkLiked) {
+            user.likedPost = user.likedPost.filter(id => id !== postId);
+        }
+        user.dislikedPost = newDislikedPost;
+        user.save();
+
+        return res.status(StatusCodes.OK).json({ message: "User disliked the post !" })
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
+    }
+}
+
 
 module.exports = {
     login , register, getUser, updateUser, deleteUser, resetPassword,toggleEnableDisable, getIsDisabledById,
-    likeComment, dislikeComment, likeReply, dislikeReply
+    likeComment, dislikeComment, likeReply, dislikeReply, likePost, dislikePost
 }
 
