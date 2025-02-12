@@ -4,8 +4,8 @@ const { authenticateUser, authenticateIsDisabled } = require('../utils/utils');
 
 const router = express.Router();
 
-router.post('/', authenticateUser, authenticateIsDisabled, controller.createComment);
-router.get('/:postId', controller.getCommentsByPostId);
+router.get('/post/:postId', controller.getCommentsByPostId);
+router.post('', authenticateUser, authenticateIsDisabled, controller.createComment);
 router.delete('/:commentId', authenticateUser, authenticateIsDisabled, controller.deleteCommentByCommentId);
 router.put('/:commentId', authenticateUser, authenticateIsDisabled, controller.updateCommentByCommentId);
 

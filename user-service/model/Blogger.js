@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../connection');
 const bcrypt = require('bcrypt');
 
-const User = sequelize.define('Blogger', {
+const Blogger = sequelize.define('Blogger', {
     username: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -75,10 +75,10 @@ const User = sequelize.define('Blogger', {
     }
 });
 
-User.beforeCreate(async (user) => {
+Blogger.beforeCreate(async (user) => {
     user.password = await bcrypt.hash(user.password, 10);
 });
 
 sequelize.sync({ force: false });
 
-module.exports = User;
+module.exports = Blogger;

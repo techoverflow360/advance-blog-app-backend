@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
-const User = require('../model/User');
+const User = require('../model/Blogger');
 require('dotenv').config();
 
 
@@ -49,12 +49,12 @@ const authenticateUser = (req, res, next) => {
     }
 }
 
-const adminAuthenticate=async(req,res,next)=>{
-    const isAdmin=req.user.payload.isAdmin;
-    if(isAdmin==true){
-        next();
+const adminAuthenticate = async(req, res, next) => {
+    const isAdmin = req.user.payload.isAdmin;
+    if(isAdmin === false){
+        return res.status(StatusCodes.UNAUTHORIZED).json({message:'You are not an admin'});
     }
-    return res.status(StatusCodes.UNAUTHORIZED).json({message:'You are not an admin'});
+    next();
 }
 
 const authenticateIsDisabled = async (req, res, next) => {

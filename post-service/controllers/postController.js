@@ -76,6 +76,17 @@ const deletePost = async (req, res) => {
     }
 }
 
+const getPostByUsername = async (req, res) => {
+    try {
+        const username = req.user.payload.username;
+        const posts = await Post.findAll({ where : { username : username }});
+        return res.status(StatusCodes.OK).json({ message: `Fetched all post with username : ${username}`, posts: posts });
+    } catch (error) {
+        console.error(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
+    }
+}
+
 const likePost = async (req, res) => {
     // update likes variable and other cases -> then add user into likedUser array  
     try {
@@ -129,5 +140,5 @@ const dislikePost = async (req, res) => {
 }
 
 module.exports = {
-    getAllPost, getPostById, createPost, updatePost, deletePost, likePost, dislikePost
+    getAllPost, getPostById, createPost, updatePost, deletePost, getPostByUsername, likePost, dislikePost
 }

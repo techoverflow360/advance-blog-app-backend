@@ -2,17 +2,17 @@
 -- use seperate database for each service to store individual data
 -- use postgreSQL 
 -- provide authentication for each service using JWT
--- implement likes, dislikes on comments
--- implement likes, dislikes replies
--- add nested comments, after clicking on total replies button, it shows all replies
 
 
 half complete: 
 -- implement admin role and its actions amd it can disable and enable user account
+-- implement likes, dislikes on comments
+-- implement likes, dislikes replies
+-- add nested comments, after clicking on total replies button, it shows all replies
+-- implement likes, dislikes on posts
 
 
 To complete: 
--- implement likes, dislikes on posts
 -- implement API Gateway to route requests to individual services
 -- implement service discovery to find the service instance
 -- implement circuit breaker to handle service instance failure
