@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
-const User = require('../model/Blogger');
+const BloggerPromise = require('../model/Blogger');
 require('dotenv').config();
 
 
@@ -28,7 +28,7 @@ const verifyToken = (token) => {
     } 
 }
 
-const authenticateUser = (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
     const authenticationHeader = req.headers['authorization'];
     if(!authenticationHeader) return res.status(StatusCodes.UNAUTHORIZED).json({ message : "Authorization header is missing !"});
     if (!authenticationHeader.startsWith('Bearer')) return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Invalid Authorization header format' });
@@ -49,7 +49,7 @@ const authenticateUser = (req, res, next) => {
     }
 }
 
-const adminAuthenticate = async(req, res, next) => {
+const adminAuthenticate = async (req, res, next) => {
     const isAdmin = req.user.payload.isAdmin;
     if(isAdmin === false){
         return res.status(StatusCodes.UNAUTHORIZED).json({message:'You are not an admin'});
@@ -59,11 +59,12 @@ const adminAuthenticate = async(req, res, next) => {
 
 const authenticateIsDisabled = async (req, res, next) => {
     try {
+        const Blogger = await BloggerPromise;
         const userName = req.user.payload.username;
-        const user = await User.findOne({where:{username:userName}});
-        if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "User not found !" });
+        const user = await Blogger.findOne({where:{username:userName}});
+        if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "Blogger not found !" });
         if(user.isDisabled) {
-            return res.status(StatusCodes.UNAUTHORIZED).json({ message: "User is currently disabled !" });
+            return res.status(StatusCodes.UNAUTHORIZED).json({ message: "Blogger is currently disabled !" });
         } 
         next();
     } catch (error) {

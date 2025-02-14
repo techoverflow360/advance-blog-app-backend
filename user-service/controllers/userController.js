@@ -1,13 +1,14 @@
 const { generateToken } = require('../utils/utils');
 const { StatusCodes } = require('http-status-codes');
 const bcrypt = require('bcrypt');
-const Blogger  = require('../model/Blogger');
+const BloggerPromise  = require('../model/Blogger');
 require('dotenv').config();
 const axios=require('axios')
 
 
 const login = async (req, res) => {
     try {
+        const Blogger = await BloggerPromise;
         const { email, password } = req.body;
         if(!email || email.trim() === "") return res.status(StatusCodes.BAD_REQUEST).json({ message : "email is empty !"});
         if(!password || password.trim() === "") return res.status(StatusCodes.BAD_REQUEST).json({ message : "password is empty !"});
@@ -32,6 +33,7 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
     try {
+        const Blogger = await BloggerPromise;
         const { username, email, password } = req.body;
         if(!username) return res.status(StatusCodes.BAD_REQUEST).json({ message : "Username is empty !" });
         if(!email) return res.status(StatusCodes.BAD_REQUEST).json({ message : "Email is empty !" });
@@ -50,6 +52,7 @@ const register = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
+        const Blogger = await BloggerPromise;
         const userName = req.user.payload.username;
         const user = await Blogger.findOne({where:{username:userName}});
         if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "Blogger not found !" });
@@ -62,6 +65,7 @@ const getUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
+        const Blogger = await BloggerPromise;
         const userName= req.params.username;
         const user = await Blogger.findOne({where:{username:userName}});
         if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "Blogger not found !" });
@@ -75,8 +79,10 @@ const deleteUser = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
+        const Blogger = await BloggerPromise;
         const id = req.params.id;
         const { password } = req.body;
+        if(password === null || password.trim() === "") return res.status(StatusCodes.BAD_REQUEST).json({message: "Password is empty or null !"}); 
         const user = await Blogger.findByPk(id);
         if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message : "Blogger not found !" });
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -91,14 +97,15 @@ const resetPassword = async (req, res) => {
 
 const toggleEnableDisable=async(req,res)=>{
     try{
+        const Blogger = await BloggerPromise;
         const username=req.params.username;
-        const user=await Blogger.findOne({where:{username:username}})
+        const user = await Blogger.findOne({where:{username:username}})
         if(!user){
-            return res.status(StatusCodes.NOT_FOUND).json({message:"user not found" })
+            return res.status(StatusCodes.NOT_FOUND).json({message:"Blogger not found" })
         }
         user.isDisabled=!user.isDisabled
         const updatedUser=await user.save();
-        return res.status(StatusCodes.OK).json({message:`currently user status : ${ updatedUser.isDisabled? "Disabled":"Enabled"}`})
+        return res.status(StatusCodes.OK).json({message:`currently blogger status : ${ updatedUser.isDisabled? "Disabled":"Enabled"}`})
     }catch(error){
         console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message : "Internal Server error !"});
@@ -107,6 +114,7 @@ const toggleEnableDisable=async(req,res)=>{
 
 const getIsDisabledById=async(req,res)=>{
     try{
+        const Blogger = await BloggerPromise;
         const username = req.user.payload.username;
         const user = await Blogger.findOne({ where : { username : username }});
         return res.status(StatusCodes.OK).json({ isDisabled : user.isDisabled });
@@ -118,19 +126,26 @@ const getIsDisabledById=async(req,res)=>{
 
 const updateUser = async (req, res) => {
     try {
+        const Blogger = await BloggerPromise;
         const userName= req.user.payload.username;
         const { username, firstName, lastName, age } = req.body;
         const user = await Blogger.findOne({where:{username:userName}});
         if(!user) return res.status(StatusCodes.NOT_FOUND).json({ message: "Blogger not found !" });
-        let checkUsername;
+        let checkUsername = null;
         if(username) checkUsername = await Blogger.findOne({ where: { username : username }});
         if(checkUsername && user.email !== checkUsername.email) return res.status(StatusCodes.UNAUTHORIZED).json({ message: "Username already taken, please choose another one"});
-        if(username) user.username = username;
+        let token = null;
+        if(username){
+            user.username = username;
+            const payload = { email: user.email, username : username , isAdmin:false };
+            token = generateToken(payload);
+        }
         if(firstName) user.firstName = firstName;
         if(lastName) user.lastName = lastName;
         if(age) user.age = age;
         const updatedUser = await user.save();
-        return res.status(StatusCodes.OK).json({ message: "Blogger is updated !", user: updatedUser });
+        if(token === null) return res.status(StatusCodes.OK).json({ message: "Blogger is updated !", user: updatedUser });
+        return res.status(StatusCodes.OK).json({message: "Blogger updated !", token : token, user : updatedUser });
 
     } catch (error) {
         console.log(error);
@@ -142,6 +157,7 @@ const updateUser = async (req, res) => {
 const likeComment = async (req, res) => {
     // get commentId -> check already liked then unlike -> if already disliked then undislike -> call comment service -> update user schema 
     try{
+        const Blogger = await BloggerPromise;
         const commendId = req.params.commendId;
 
         const username = req.user.payload.username;
@@ -184,6 +200,7 @@ const likeComment = async (req, res) => {
 const dislikeComment = async (req, res) => {
     // get commentId -> check already disliked then undislike -> if already liked then unliked -> call comment service -> update user schema 
     try{
+        const Blogger = await BloggerPromise;
         const commendId = req.params.commendId;
 
         const username = req.user.payload.username;
@@ -226,6 +243,7 @@ const dislikeComment = async (req, res) => {
 const likeReply = async (req, res) => {
     // get replyId -> check already liked then unlike -> check dislike then undislike -> call comment service -> update user schema 
     try{
+        const Blogger = await BloggerPromise;
         const replyId = req.params.replyId;
 
         const username = req.user.payload.username;
@@ -268,6 +286,7 @@ const likeReply = async (req, res) => {
 const dislikeReply = async (req, res) => {
     // get replyId -> check already disliked then undislike -> check like then unlike -> call comment service -> update user schema 
     try{
+        const Blogger = await BloggerPromise;
         const replyId = req.params.replyId;
 
         const username = req.user.payload.username;
@@ -310,6 +329,7 @@ const dislikeReply = async (req, res) => {
 const likePost = async (req, res) => {
     // get postId -> check already liked then unlike -> check dislike then undislike -> call post service -> update user schema by title
     try {
+        const Blogger = await BloggerPromise;
         const postId = req.params.postId;
 
         const username = req.user.payload.username;
@@ -352,6 +372,7 @@ const likePost = async (req, res) => {
 const dislikePost = async (req, res) => {
     // get postId -> check already disliked then undislike -> check like then unlike -> call post service -> update user schema by title
     try {
+        const Blogger = await BloggerPromise;
         const postId = req.params.postId;
 
         const username = req.user.payload.username;

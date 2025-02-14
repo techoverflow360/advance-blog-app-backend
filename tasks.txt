@@ -10,31 +10,33 @@ half complete:
 -- implement likes, dislikes replies
 -- add nested comments, after clicking on total replies button, it shows all replies
 -- implement likes, dislikes on posts
+-- implement API Gateway to route requests to individual services
 
 
 To complete: 
--- implement API Gateway to route requests to individual services
+-- add testing framework
+-- implement google, Facebook login 
+-- implement image saving for post : on cloudinary
+-- allow them to save post as draft and publish later : separate service 
+-- implement user follow and unfollow and showing number of followers
+-- implement pagination
+-- top trending blogs based on amounts of clicks and likes
+-- notify via email about trending post related to your favourite category
+
+-- Integrate sharing functionality for social media platforms (e.g., Twitter, Facebook).
+-- implement search functionality 
+-- add filtering by category, and other features  
+-- Add tags to posts for better categorization and searchability.
+-- implement analytics for user engagement
+-- subscription model of different types 
+-- payment system for taking subscription
+-- implement stream and buffer for large data reading 
+-- recommendation system 
 -- implement service discovery to find the service instance
 -- implement circuit breaker to handle service instance failure
 -- implement load balancing to distribute traffic across service instances
--- implement google, Facebook login 
--- use docker to containerize the application
--- implement image saving for post
 -- implement cashing for frequently used data
--- implement search functionality 
--- add filtering by category, and other features  
--- implement pagination
--- implement user follow and unfollow and showing number of followers
--- allow them to save post as draft and publish later
--- Add tags to posts for better categorization and searchability.
--- Integrate sharing functionality for social media platforms (e.g., Twitter, Facebook).
--- implement analytics for user engagement
+-- use docker to containerize the application
 -- deploy the project
--- payment system for taking subscription
--- subscription model of different types 
--- implement stream and buffer for large data reading 
--- top trending blogs based on amounts of clicks and likes
--- recommendation system 
--- notify via email about trending post related to your favourite category
 
 

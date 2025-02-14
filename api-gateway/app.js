@@ -93,7 +93,7 @@ app.use('/comment-service/*', async (req, res) => {     // Handles all requests 
 
 app.use('/admin-service/*', async (req, res) => {     // Handles all requests starting with /user-service/ dynamically
   try {
-    const response = await crossServerRequestUsingAxios(req, 8083); 
+    const response = await crossServerRequestUsingAxios(req, 8084); 
     res.status(response.status).json(response.data);
 
   } catch (error) {

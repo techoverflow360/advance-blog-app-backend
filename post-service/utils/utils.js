@@ -44,7 +44,7 @@ const authenticateUser = (req, res, next) => {
 
 const authenticateIsDisabled=async(req,res,next)=>{
     const id=req.user.payload.email;
-    const response=await axios.get(`http://localhost:8080/users/isDisabled/${id}`)
+    const response = await axios.get(`http://localhost:8080/users/isDisabled/${id}`)
     if(!response){
         return res.status(StatusCodes.NOT_FOUND).json({message:"response is empty while contacting with user service "})
     }

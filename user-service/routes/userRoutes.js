@@ -26,6 +26,6 @@ router.post('/dislike-post/:postId', authenticateUser, authenticateIsDisabled, c
 
 // for admin purpose 
 router.delete('/:username', authenticateUser, adminAuthenticate, controller.deleteUser);
-router.put('/change-isDisable/:username', authenticateUser, adminAuthenticate, controller.toggleEnableDisable);
+router.put('/changeIsDisable/:username', authenticateUser, adminAuthenticate, controller.toggleEnableDisable);
 
 module.exports = router;

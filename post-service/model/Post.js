@@ -1,49 +1,55 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../connection');
+const sequelizePromise = require('../connection');
 
-const Post = sequelize.define('Post', {
-    id: {
-        type: DataTypes.INTEGER, 
-        allowNull: false,
-        autoIncrement: true,     
-        primaryKey: true,  
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    category: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    likes: {
-        type: DataTypes.NUMBER,
-        allowNull: true,
-    },
-    dislikes: {
-        type: DataTypes.NUMBER,
-        allowNull: true,
-    },
-    likedUser : {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true,
-        defaultValue: []
-    },
-    dislikedUser : {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true,
-        defaultValue: []
-    }
-}, { timestamps: true });
+async function setupModel() {
+    const sequelize = await sequelizePromise;
 
-sequelize.sync({ force: false });
+    const Post = sequelize.define('Post', {
+        id: {
+            type: DataTypes.INTEGER, 
+            allowNull: false,
+            autoIncrement: true,     
+            primaryKey: true,  
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        content: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        category: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        likes: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        dislikes: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        likedUser : {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: true,
+            defaultValue: []
+        },
+        dislikedUser : {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: true,
+            defaultValue: []
+        }
+    }, { timestamps: true });
 
-module.exports = Post;
+    sequelize.sync({ force: false, alter: true });
+    return Post;
+
+}
+
+module.exports = setupModel();

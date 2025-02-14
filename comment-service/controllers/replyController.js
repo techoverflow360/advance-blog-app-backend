@@ -1,9 +1,10 @@
-const Reply = require('../model/Reply');
+const replyPromise = require('../model/Reply');
 const { StatusCodes } = require('http-status-codes');
 
 
 const getAllRepliesWithCommentId = async (req, res) => {
     try {
+        const Reply = await replyPromise;
         const commentId = req.params.commentId;
         const replies = await Reply.findAll({ where: { commentId: commentId }});
         return res.status(StatusCodes.OK).json({ message: "Replies found !", replies: replies });
@@ -15,6 +16,7 @@ const getAllRepliesWithCommentId = async (req, res) => {
 
 const replyOnAComment = async (req, res) => {
     try {
+        const Reply = await replyPromise;
         const commentId = req.params.commentId;
         const { content } = req.body;
         if(!content) return res.status(StatusCodes.BAD_REQUEST).json({ message: "Reply is empty !"});
@@ -29,6 +31,7 @@ const replyOnAComment = async (req, res) => {
 
 const deleteReplyUsingReplyId = async (req, res) => {
     try {
+        const Reply = await replyPromise;
         const replyId = req.params.id;
         const reply = await Reply.findByPk(replyId);
         if(!reply) {
@@ -46,6 +49,7 @@ const deleteReplyUsingReplyId = async (req, res) => {
 
 const updateReplyByReplyId = async (req, res) => {
     try {
+        const Reply = await replyPromise;
         const replyId = req.params.id;
         const { content } = req.body;
         if(!content) {
@@ -63,6 +67,7 @@ const updateReplyByReplyId = async (req, res) => {
 
 const likeOnReply = async (req, res) => {
     try {
+        const Reply = await replyPromise;
         const replyId = req.params.replyId;
         const { check, checkDisliked } = req.body;
         const reply = await Reply.findByPk(replyId);
@@ -79,6 +84,7 @@ const likeOnReply = async (req, res) => {
 
 const dislikeOnReply = async (req, res) => {
     try {
+        const Reply = await replyPromise;
         const replyId = req.params.replyId;
         const { check, checkLiked } = req.body;
         const reply = await Reply.findByPk(replyId);

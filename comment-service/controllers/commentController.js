@@ -1,10 +1,11 @@
-const Comment = require('../model/Comment');
-const Reply = require('../model/Reply');
+const commentPromise = require('../model/Comment');
+const replyPromise = require('../model/Reply');
 const { StatusCodes } = require('http-status-codes');
 const axios = require('axios');
 
 const createComment = async (req, res) => {
     try {
+        const Comment = await commentPromise;
         const { comment, postId } = req.body;
         const username = req.user.payload.username;
         const commnt = await Comment.create({ comment, postId, username });
@@ -17,6 +18,8 @@ const createComment = async (req, res) => {
 
 const getCommentsByPostId = async (req, res) => {
     try {
+        const Comment = await commentPromise;
+        const Reply = await replyPromise;
         const postId = req.params.postId;
         const comments = await Comment.findAll({ where: { postId: postId }});
         comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -35,6 +38,7 @@ const getCommentsByPostId = async (req, res) => {
 
 const deleteCommentByCommentId=async(req,res)=>{
     try{
+        const Comment = await commentPromise;
         const id=req.params.commentId;
         const comment=await Comment.findByPk(id) //where:{ id:id}
         if(!comment){
@@ -53,6 +57,7 @@ const deleteCommentByCommentId=async(req,res)=>{
 
 const updateCommentByCommentId = async (req, res) => {
     try {
+        const Comment = await commentPromise;
         const commentId = req.params.commentId;
         const { comment } = req.body;
         if(!comment) {
@@ -70,6 +75,7 @@ const updateCommentByCommentId = async (req, res) => {
 
 const likeOnComment = async (req, res) => {
     try {
+        const Comment = await commentPromise;
         const commentId = req.params.commentId;
         const { check, checkDisliked } = req.body;
         const comment = await Comment.findByPk(commentId);
@@ -86,6 +92,7 @@ const likeOnComment = async (req, res) => {
 
 const dislikeOnComment = async (req, res) => {
     try {
+        const Comment = await commentPromise;
         const commentId = req.params.commentId;
         const { check, checkLiked } = req.body;
         const comment = await Comment.findByPk(commentId);

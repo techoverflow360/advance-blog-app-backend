@@ -1,10 +1,11 @@
-const Post = require('../model/Post');  
+const postPromise = require('../model/Post');  
 const { StatusCodes } = require('http-status-codes');
 const axios = require('axios');
 
 
 const getAllPost = async (req, res) => {
     try {
+        const Post = await postPromise;
         const posts = await Post.findAll();
         return res.status(StatusCodes.OK).json({ message: "Found posts !", posts: posts  });
     } catch (error) {
@@ -15,6 +16,7 @@ const getAllPost = async (req, res) => {
 
 const getPostById = async (req, res) => {
     try {
+        const Post = await postPromise;
         const postId = req.params.id;
         const post = await Post.findOne({ where : { id: postId } });
         const response = await axios.get(`http://localhost:8082/comments/${postId}`, {
@@ -33,6 +35,7 @@ const getPostById = async (req, res) => {
 
 const createPost = async (req, res) => {
     try {
+        const Post = await postPromise;
         const username = req.user.payload.username;
         const { title, content, category } = req.body;
         if(!title) return res.status(StatusCodes.BAD_REQUEST).json({ message : "Title is empty !" });
@@ -48,6 +51,7 @@ const createPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
     try {
+        const Post = await postPromise;
         const postId = req.params.id;
         const post = await Post.findOne({ where : { id: postId } });
         if(!post) return res.status(StatusCodes.NOT_FOUND).json({ message: "No post found with this id " + postId });
@@ -65,6 +69,7 @@ const updatePost = async (req, res) => {
 
 const deletePost = async (req, res) => {
     try {
+        const Post = await postPromise;
         const postId = req.params.id;
         const post = await Post.findOne({ where : { id: postId } });
         if(!post) return res.status(StatusCodes.NOT_FOUND).json({ message: "No post found with this id " + postId });
@@ -78,6 +83,7 @@ const deletePost = async (req, res) => {
 
 const getPostByUsername = async (req, res) => {
     try {
+        const Post = await postPromise;
         const username = req.user.payload.username;
         const posts = await Post.findAll({ where : { username : username }});
         return res.status(StatusCodes.OK).json({ message: `Fetched all post with username : ${username}`, posts: posts });
@@ -90,6 +96,7 @@ const getPostByUsername = async (req, res) => {
 const likePost = async (req, res) => {
     // update likes variable and other cases -> then add user into likedUser array  
     try {
+        const Post = await postPromise;
         const postId = req.params.postId;
         const username = req.user.payload.username;
         const { check, checkDisliked } = req.body;
@@ -116,6 +123,7 @@ const likePost = async (req, res) => {
 const dislikePost = async (req, res) => {
     // update dislikes variable and other cases -> then add user into dislikedUser array  
     try {
+        const Post = await postPromise;
         const postId = req.params.postId;
         const username = req.user.payload.username;
         const { check, checkLiked } = req.body;
